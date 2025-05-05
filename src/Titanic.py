@@ -12,9 +12,8 @@ print (correlation["Survived"].sort_values(ascending=False))
 
 # "Pclass" is a non-human attribute with strong correlation to survival
 
-print(df["Pclass"].value_counts())
-print(df.groupby("Pclass")["Age"].mean())
-print(df.groupby("Survived")["Sex"].count())
-print(df.groupby("Sex")["Survived"].mean())
-print(df.groupby(["Pclass", "Sex", "Survived"]).size())
-print(df.groupby(["Pclass", "Sex"])["Survived"].mean() * 100)
+#Divide the "Age" column
+
+age_bins = [0, 25, 50, float('inf')]
+age_labels = ['<25', '<50', '>50']
+df['AgeGroup'] = pd.cut(df['Age'], bins=age_bins, labels=age_labels)
