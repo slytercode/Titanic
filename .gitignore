@@ -1,0 +1,16 @@
+# Ignora l'ambiente virtuale
+venv/
+
+# File di sistema
+.DS_Store
+Thumbs.db
+
+# File temporanei Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# File temporanei di Jupyter o VSCode
+.ipynb_checkpoints
+.vscode/
