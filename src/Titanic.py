@@ -1,4 +1,3 @@
-
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
@@ -11,7 +10,7 @@ def clean_data(df):
 	"""Clean the Titanic dataset: drop 'Cabin', fill 'Age', drop missing 'Embarked'."""
 	if 'Cabin' in df.columns:
 		df = df.drop(columns="Cabin")
-	df["Age"].fillna(df["Age"].mean(), inplace=True)
+	df["Age"] = df["Age"].fillna(df["Age"].mean())  # Avoid inplace operation
 	df = df[df["Embarked"].notnull()]
 	return df
 
@@ -24,10 +23,10 @@ def add_age_group(df):
 
 def calculate_survival_rates(df):
 	"""Calculate survival rates by Pclass, Sex, and AgeGroup."""
-	survived_group = (df[df["Survived"] == 1].groupby(["Pclass", "Sex", "AgeGroup"]).size())
+	survived_group = (df[df["Survived"] == 1].groupby(["Pclass", "Sex", "AgeGroup"], observed=True).size())
 	survived_table = survived_group.unstack(level=["AgeGroup"])
-	totali = df.groupby(["Pclass","Sex","AgeGroup"]).size().unstack(level=["AgeGroup"])
-	percentages_survived = (survived_table/totali)*100
+	totali = df.groupby(["Pclass", "Sex", "AgeGroup"], observed=True).size().unstack(level=["AgeGroup"])
+	percentages_survived = (survived_table / totali) * 100
 	percentages_survived = percentages_survived.round(2)
 	return percentages_survived
 
@@ -63,26 +62,30 @@ def business_insights(percentages_survived):
 	print(f"The group with the highest survival rate is: Class {max_group[0]}, Gender {max_group[1]}, Age Group {max_group[2]} ({max_rate}%).")
 	# Example: Business recommendation
 	print("\nRecommendation: If you were designing safety protocols or marketing for cruise lines, focus on improving survival odds for the most vulnerable groups (e.g., lower class, older males). Use this insight to inform resource allocation and communication strategies.")
+print("starting EDA")
 
 def eda_summary(df):
-	"""
-	Perform exploratory data analysis and print summary statistics and missing value analysis.
-	Business-oriented comments are included to demonstrate analytical mindset.
-	"""
-	print("\n--- Exploratory Data Analysis (EDA) ---")
-	print("\nData Overview:")
-	print(df.head())
-	print("\nSummary Statistics:")
-	print(df.describe(include='all'))
-	print("\nMissing Values:")
-	print(df.isnull().sum())
-	# Business context: Highlight potential data quality issues
-	print("\nBusiness Note: Addressing missing values is crucial for reliable business insights. Incomplete data can lead to biased decisions, so we ensure all key features are clean before analysis.")
+    """
+    Perform exploratory data analysis and print summary statistics and missing value analysis.
+    Business-oriented comments are included to demonstrate analytical mindset.
+    """
+    print("\n--- Debug: Entered eda_summary function ---")
+    print("\n--- Exploratory Data Analysis (EDA) ---")
+    print("\nData Overview:")
+    print(df.head())
+    print("\nSummary Statistics:")
+    print(df.describe(include='all'))
+    print("\nMissing Values:")
+    print(df.isnull().sum())
+    # Business context: Highlight potential data quality issues
+    print("\nBusiness Note: Addressing missing values is crucial for reliable business insights. Incomplete data can lead to biased decisions, so we ensure all key features are clean before analysis.")
 
 def main():
 	# Use relative path for portability
 	data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "TitanicDataset.csv")
+	print(f"\n--- Debug: Loading dataset from {data_path} ---")
 	df = load_data(data_path)
+	print("\n--- Debug: Dataset loaded successfully ---")
 	# EDA and data quality check before further analysis
 	eda_summary(df)
 	df = clean_data(df)
